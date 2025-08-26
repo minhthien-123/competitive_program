@@ -1,0 +1,8 @@
+# Ignore tất cả
+*
+
+# Nhưng giữ lại folder
+!*/
+
+# Giữ file .cpp
+!*.cpp
