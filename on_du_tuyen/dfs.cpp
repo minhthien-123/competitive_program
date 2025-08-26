@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+#define task "dfs"
+#define int long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+
+const int maxn = 1e5;
+const int inf  = 1e18;
+const int mod  = 1e9 + 7;
+const int inv  = (mod + 1) / 2;
+
+int n, m, s, t;
+std::vector<int> adj[maxn + 7];
+int par[maxn + 7];
+bool vis[maxn + 7];
+std::vector<int> path;
+
+void trace(int u)
+{
+    if (u == par[u])
+    {
+        path.pb(u);
+        return;
+    }
+
+    path.pb(u);
+    trace(par[u]);
+}
+
+void dfs(int u)
+{
+    for (int v : adj[u])
+    {
+        if (par[v] == -1)
+        {
+            par[v] = u;
+            dfs(v);
+        }
+    }
+}
+
+signed main()
+{
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    if (std::fopen(task".inp", "r"))
+    {
+        std::freopen(task".inp", "r", stdin);
+        std::freopen(task".out", "w", stdout);
+    }
+
+    memset(par, -1, sizeof par);
+
+    std::cin >> n >> m >> s >> t;
+    for (int i = 1; i <= m; i++)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        std::sort(adj[i].begin(), adj[i].end());
+    }
+
+    par[s] = s;
+    dfs(s);
+
+    trace(t);
+
+    std::reverse(path.begin(), path.end());
+
+    for (int i : path)
+    {
+        std::cout << i << " ";
+    }
+
+    return 0;
+}

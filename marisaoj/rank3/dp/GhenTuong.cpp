@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define task ""
+#define int long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+
+const int maxn = 1e5 + 7;
+const int inf  = 1e9;
+
+int n;
+int a[maxn], b[maxn];
+int dp[maxn][2][2];
+
+signed main()
+{
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    if (std::fopen(task".inp", "r"))
+    {
+        std::freopen(task".inp", "r", stdin);
+        std::freopen(task".out", "w", stdout);
+    }
+
+    std::cin >> n;
+
+    for (int i = 1; i <= n; i++)
+    {
+        std::cin >> a[i];
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        std::cin >> b[i];
+    }
+
+    memset(dp, -inf, sizeof dp);
+
+    dp[1][1][1] = a[1];
+    dp[1][2][1] = b[1];
+
+    for (int i = 2; i <= n; i++)
+    {
+        dp[i][1][1] = std::max({dp[i][1][1], dp[i - 1][2][1] + a[i], dp[i - 1][2][2] + a[i]});
+        dp[i][1][2] = std::max({dp[i][1][2], dp[i - 1][1][1] + a[i]});
+
+        dp[i][2][1] = std::max({dp[i][2][1], dp[i - 1][1][1] + b[i], dp[i - 1][1][2] + b[i]});
+        dp[i][2][2] = std::max({dp[i][2][2], dp[i - 1][2][1] + b[i]});
+    }
+
+    std::cout << std::max({dp[n][1][1], dp[n][1][2], dp[n][2][1], dp[n][2][2]});
+
+    return 0;
+}

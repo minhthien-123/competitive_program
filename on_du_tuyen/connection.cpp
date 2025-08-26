@@ -1,0 +1,150 @@
+#include <bits/stdc++.h>
+#define task "connection"
+#define int long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+
+const int maxn = 1e6;
+const int inf  = 1e18;
+const int mod  = 1e9 + 7;
+const int inv  = (mod + 1) / 2;
+
+int n, m, k;
+int par[maxn + 7], sz[maxn + 7];
+
+void init(int v)
+{
+    par[v] = v;
+    sz[v] = 1;
+}
+
+int acs(int v)
+{
+    if (v == par[v])
+    {
+        return v;
+    }
+    int p = acs(par[v]);
+    par[v] = p;
+    return p;
+}
+
+bool join(int a, int b)
+{
+    a = acs(a);
+    b = acs(b);
+    if (a == b)
+    {
+        return false;
+    }
+    if (sz[a] < sz[b])
+    {
+        std::swap(a, b);
+    }
+    par[b] = a;
+    sz[a] += sz[b];
+    return true;
+}
+
+int idx(int x, int y)
+{
+    return (x - 1) * n + y;
+}
+
+std::vector<std::pair<char, ii>> ans, a;
+
+signed main()
+{
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    if (std::fopen(task".inp", "r"))
+    {
+        std::freopen(task".inp", "r", stdin);
+        std::freopen(task".out", "w", stdout);
+    }
+
+    std::cin >> m >> n >> k;
+    for (int i = 1; i <= m * n; i++)
+    {
+        init(i);
+    }
+
+    for (int t = 0; t < k; t++)
+    {
+        char c;
+        int i, j;
+        std::cin >> c >> i >> j;
+        int u = idx(i, j), v;
+        if (c == 'R')
+        {
+            if (j < n)
+            {
+                v = idx(i, j + 1);
+            }
+            else
+            {
+                continue;
+            }
+        }
+        else
+        {
+            if (i < m)
+            {
+                v = idx(i + 1, j);
+            }
+            else
+            {
+                continue;
+            }
+        }
+        join(u, v);
+    }
+
+    int cnt = 0;
+    for (int x = 1; x <= m * n; x++)
+    {
+        if (acs(x) == x)
+        {
+            cnt++;
+        }
+    }
+
+    std::vector<std::pair<char, ii>> ans;
+    for (int i = 1; i <= m && ans.size() < cnt - 1; i++)
+    {
+        for (int j = 1; j < n && ans.size() < cnt - 1; j++)
+        {
+            int u = idx(i, j);
+            int v = idx(i, j + 1);
+            if (join(u, v))
+            {
+                ans.pb({'R', {i, j}});
+            }
+        }
+    }
+
+    for (int i = 1; i < m && ans.size() < cnt - 1; i++)
+    {
+        for (int j = 1; j <= n && ans.size() < cnt - 1; j++)
+        {
+            int u = idx(i, j), v = idx(i + 1, j);
+            if (join(u, v))
+            {
+                ans.pb({'D', {i, j}});
+            }
+        }
+    }
+
+    std::cout << ans.size() << "\n";
+    for (auto e : ans)
+    {
+        std::cout << e.fi << " " << e.se.fi << " " << e.se.se << "\n";
+    }
+
+    return 0;
+}

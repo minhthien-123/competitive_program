@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+#define task "connect"
+#define ll long long
+#define pb push_back
+
+const int maxn = 1e5 + 7;
+
+std::vector<int> adj[maxn];
+bool vis[maxn];
+int n, m, res = 0;
+std::set<int> s;
+
+void dfs(int u){
+    if (vis[u]) return;
+    s.insert(u);
+    //std::cout << u << " ";
+    vis[u] = true;
+
+    for (int v : adj[u])
+        if (!vis[v])
+            dfs(v);
+}
+
+int main(){
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    std::freopen(task".inp", "r", stdin);
+    std::freopen(task".out", "w", stdout);
+
+    std::cin >> n >> m;
+    for (int i = 1; i <= m; i++){
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    for (int i = 1; i <= n; i++){
+        s.clear();
+        dfs(i);
+        for (auto i : s)
+            std::cout << i << " ";
+        if (!s.empty()) std::cout << "\n";
+    }
+
+    return 0;
+}

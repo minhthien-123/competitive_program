@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+#define task "dclt2"
+#define int long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+
+const int maxn = 1e5;
+const int inf = 1e18;
+const int mod = 1e9 + 7;
+const int inv = (mod + 1) / 2;
+
+std::vector<int> adj[maxn + 7], v;
+bool vis[maxn + 7];
+int n, m;
+int res;
+
+void dfs(int u)
+{
+    if (vis[u])
+    {
+        return;
+    }
+    res++;
+    vis[u] = 1;
+
+    for (int v : adj[u])
+    {
+        if (!vis[v])
+        {
+            dfs(v);
+        }
+    }
+}
+
+signed main()
+{
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
+
+    if (std::fopen(task ".inp", "r"))
+    {
+        std::freopen(task ".inp", "r", stdin);
+        std::freopen(task ".out", "w", stdout);
+    }
+
+    std::cin >> n >> m;
+    for (int i = 1; i <= m; i++)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        res = 0;
+        dfs(i);
+        // std::cout << res << "\n";
+        if (res != 0)
+        {
+            v.pb(res);
+        }
+    }
+
+    std::sort(v.begin(), v.end());
+
+    std::cout << v.size() << "\n";
+    for (int i : v)
+    {
+        std::cout << i << ' ';
+    }
+
+    return 0;
+}

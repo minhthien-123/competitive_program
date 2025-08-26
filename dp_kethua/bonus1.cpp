@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+#define task "bonus1"
+#define ll long long
+
+const int maxn = 1e3 + 5;
+
+int n, k, a[maxn][maxn], pre[maxn][maxn], ans = INT_MIN;
+
+int main(){
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    //std::freopen(task".inp", "r", stdin);
+    //std::freopen(task".out", "w", stdout);
+
+    std::cin >> n >> k;
+
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            std::cin >> a[i][j];
+
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1] + a[i][j];
+
+    for (int i = k; i <= n; i++)
+        for (int j = k; j <= n; j++){
+            int s = pre[i][j] - pre[i - k][j] - pre[i][j - k] + pre[i - k][j - k];
+            ans = std::max(ans, s);
+        }
+
+    std::cout << ans;
+
+    return 0;
+}

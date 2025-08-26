@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+#define task "nong"
+#define int long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+
+const int maxn = 1e5;
+const int inf  = 1e18;
+const int mod  = 1e9 + 7;
+const int inv  = (mod + 1) / 2;
+
+int n, q, k;
+std::vector<int> adj[maxn + 7];
+int tin[maxn + 7], tout[maxn + 7], tour[maxn + 7], timer;
+
+void dfs(int u, int p)
+{
+    tour[++timer] = u;
+    tin[u] = timer;
+
+    for (int v : adj[u])
+    {
+        if (v != p)
+        {
+            dfs(v, u);
+        }
+    }
+
+    tout[u] = timer;
+}
+
+signed main()
+{
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0); std::cout.tie(0);
+
+    if (std::fopen(task".inp", "r"))
+    {
+        std::freopen(task".inp", "r", stdin);
+        std::freopen(task".out", "w", stdout);
+    }
+
+    std::cin >> n >> q;
+
+    for (int i = 1; i < n; i++)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    dfs(1, -1);
+
+    while (q--)
+    {
+        std::cin >> k;
+        int u, v;
+        int tu = inf, tv = -inf;
+        while (k--)
+        {
+            int x;
+            std::cin >> x;
+            if (tu > tin[x])
+            {
+                tu = tin[x];
+                u = x;
+            }
+            if (tv < tin[x])
+            {
+                tv = tin[x];
+                v = x;
+            }
+        }
+
+        std::cout << u << " " << v << "\n";
+    }
+
+    return 0;
+}

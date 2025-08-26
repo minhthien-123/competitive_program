@@ -1,4 +1,15 @@
+<<<<<<< HEAD
 *
 !*/
 !*.cpp
 !*.h
+=======
+# Ignore tất cả
+*
+
+# Nhưng giữ lại folder
+!*/
+
+# Giữ file .cpp
+!*.cpp
+>>>>>>> 17d0e4c059245d61c0facaea7c94c8d99cd49bd9
