@@ -87,7 +87,7 @@ void sub1()
 bool solve(int pos)
 {
     int cur = s[pos] - '0';
-    for (int i = std::max(1, cur); i <= 9; ++i)
+    for (int i = std::max(1, cur); i <= 9; i++)
     {
         if (vis[i])
         {
