@@ -92,7 +92,7 @@ __Thien_dep_trai__
     if (std::fopen(task ".inp", "r"))
     {
         std::freopen(task ".inp", "r", stdin);
-        std::freopen(task ".ans", "w", stdout);
+    std::freopen(task ".ans", "w", stdout);
     }
 
     while (std::cin >> n)
