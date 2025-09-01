@@ -142,7 +142,7 @@ void sub2()
 
     if (sz(s) > 9)
     {
-        std::cout << "0\n";
+        std::cout << "0";
     }
     else if (solve(0))
     {
