@@ -51,25 +51,96 @@ ll power(ll x, ll y)
 
 struct tree
 {
-    ll a, b, prod;
+    ll a, b, ab, x, y;
 } st[4 * maxn + 7];
 
 std::vector<int> adj[maxn + 7];
 int n, q;
 ll a[maxn + 7], b[maxn + 7];
 
-tree merge(tree x, tree y)
-{
-
-}
-
 void build(int id, int l, int r)
 {
     if (l == r)
     {
-        st[id] = {a[l], b[l], mul(a[l], b[l])};
+        st[id].a = a[l];
+        st[id].b = b[l];
+        st[id].ab = mul(a[l], b[l]);
         return;
     }
+
+    int mid = (l + r) / 2;
+    build(id * 2, l, mid);
+    build(id * 2 + 1, mid + 1, r);
+    st[id].a = add(st[id * 2].a, st[id * 2 + 1].a);
+    st[id].b = add(st[id * 2].b, st[id * 2 + 1].b);
+    st[id].ab = add(st[id * 2].ab, st[id * 2 + 1].ab);
+}
+
+void down(int id, ll x, ll y, int u, int v)
+{
+    int len = v - u + 1;
+    ll sa = st[id].a, sb = st[id].b;
+    st[id].a = add(st[id].a, mul(len, x));
+    st[id].b = add(st[id].b, mul(len, y));
+    st[id].ab = add(st[id].ab, add(mul(y, sa), add(mul(x, sb), mul(len, mul(x, y)))));
+    st[id].x = add(st[id].x, x);
+    st[id].y = add(st[id].y, y);
+}
+
+void apply(int id, int l, int r, ll x, ll y)
+{
+    int len = r - l + 1;
+    ll sa = st[id].a;
+    ll sb = st[id].b;
+    st[id].a = add(st[id].a, mul(len, x));
+    st[id].b = add(st[id].b, mul(len, y));
+    st[id].ab = add(st[id].ab, add(mul(x, sb), add(mul(y, sa), mul(len, mul(x, y)))));
+    st[id].x = add(st[id].x, x);
+    st[id].y = add(st[id].y, y);
+}
+
+void fixed(int id, int l, int r)
+{
+    int mid = (l + r) >> 1;
+    apply(id * 2, l, mid, st[id].x, st[id].y);
+    apply(id * 2 + 1, mid + 1, r, st[id].x, st[id].y);
+    st[id].x = st[id].y = 0;
+}
+void update(int id, int l, int r, int u, int v, ll x, ll y)
+{
+    if (v < l || r < u)
+    {
+        return;
+    }
+    if (u <= l && r <= v)
+    {
+        return down(id, x, y, l, r);
+    }
+
+    fixed(id, l, r);
+    int mid = (l + r) / 2;
+    update(id * 2, l, mid, u, v, x, y);
+    update(id * 2 + 1, mid + 1, r, u, v, x, y);
+    st[id].a = add(st[id * 2].a, st[id * 2 + 1].a);
+    st[id].b = add(st[id * 2].b, st[id * 2 + 1].b);
+    st[id].ab = add(st[id * 2].ab, st[id * 2 + 1].ab);
+}
+
+ll get(int id, int l, int r, int u, int v)
+{
+    if (v < l || r < u)
+    {
+        return 0;
+    }
+    if (u <= l && r <= v)
+    {
+        return st[id].ab;
+    }
+    fixed(id, l, r);
+    int mid = (l + r) / 2;
+    ll get1 = get(id * 2, l, mid, u, v);
+    ll get2 = get(id * 2 + 1, mid + 1, r, u, v);
+    return add(get1, get2);
 }
 
 __Thien_dep_trai__
@@ -84,7 +155,8 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    std::cin >> n;
+    int q;
+    std::cin >> n >> q;
     for (int i = 1; i <= n; i++)
     {
         std::cin >> a[i];
@@ -94,7 +166,28 @@ __Thien_dep_trai__
         std::cin >> b[i];
     }
 
+    build(1, 1, n);
 
+    while (q--)
+    {
+        int type, l, r;
+        ll x;
+        std::cin >> type >> l >> r;
+        if (type == 1)
+        {
+            std::cin >> x;
+            update(1, 1, n, l, r, x, 0);
+        }
+        else if (type == 2)
+        {
+            std::cin >> x;
+            update(1, 1, n, l, r, 0, x);
+        }
+        else
+        {
+            std::cout << get(1, 1, n, l, r) << '\n';
+        }
+    }
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
