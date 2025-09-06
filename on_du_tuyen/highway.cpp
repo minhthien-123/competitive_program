@@ -2,6 +2,7 @@
 #define task "highway"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
+#define ull unsigned long long
 #define ii std::pair<int, int>
 #define iii std::pair<ii, int>
 #define pll std::pair<ll, ll>
@@ -49,7 +50,7 @@ ll power(ll x, ll y)
     }
 }
 
-std::vector<std::pair<int, ll>> adj[maxn + 7];
+std::vector<std::pair<int, ull>> adj[maxn + 7];
 int n, m;
 int par[maxn + 7], sz[maxn + 7];
 bool vis[maxn + 7];
@@ -58,7 +59,7 @@ int p[maxn + 7];
 struct edge
 {
     int u, v;
-    ll w;
+    ull w;
 };
 
 bool cmp(edge a, edge b)
@@ -143,7 +144,7 @@ __Thien_dep_trai__
     for (int i = 1; i <= m; i++)
     {
         int u, v;
-        ll w;
+        ull w;
         std::cin >> u >> v >> w;
         edges.pb({u, v, w});
     }
@@ -155,12 +156,12 @@ __Thien_dep_trai__
 
     std::sort(edges.begin(), edges.end(), cmp);
 
-    ll ans = -inf;
+    ull ans = -inf;
     for (auto e : edges)
     {
         int u = e.u;
         int v = e.v;
-        ll w = e.w;
+        ull w = e.w;
         if (acs(u) != acs(v))
         {
             join(u, v);
