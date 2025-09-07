@@ -53,6 +53,7 @@ ll power(ll x, ll y)
 std::vector<int> adj[maxn + 7];
 int n, k;
 ll a[maxn + 7], pre[maxn + 7];
+ld pref[maxn + 7];
 
 void sub1()
 {
@@ -75,9 +76,40 @@ void sub1()
     std::cout << std::setprecision(6) << std::fixed << ans;
 }
 
+bool check(ld mid)
+{
+    for (int i = 1; i <= n; i++)
+    {
+        pref[i] = pref[i - 1] + (a[i] - mid);
+    }
+    ld mn = 0.0;
+    for (int i = k; i <= n; i++)
+    {
+        if (pref[i] - mn >= 0.0)
+        {
+            return true;
+        }
+        mn = std::min(mn, pref[i - k]);
+    }
+    return false;
+}
+
 void sub2()
 {
-    
+    ld l = 1, r = 1e18;
+    for (int i = 1; i <= 100; i++)
+    {
+        ld mid = (l + r) / 2;
+        if (check(mid))
+        {
+            l = mid;
+        }
+        else
+        {
+            r = mid;
+        }
+    }
+    std::cout << std::setprecision(6) << std::fixed << l;
 }
 
 __Thien_dep_trai__
@@ -98,6 +130,7 @@ __Thien_dep_trai__
         std::cin >> a[i];
     }
 
+    //sub2();
     if (n <= 3000)
     {
         sub1();
