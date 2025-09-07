@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define task "apen"
 #define __Thien_dep_trai__ signed main()
+#define int long long
 #define ll long long
 #define ii std::pair<int, int>
 #define iii std::pair<ii, int>
@@ -51,7 +52,7 @@ ll power(ll x, ll y)
 
 std::vector<int> adj[maxn + 7];
 int n, q, m, k;
-int a[maxn + 7];
+int a[maxn + 7], pre[maxn + 7];
 
 void sub1()
 {
@@ -80,9 +81,36 @@ void sub1()
     }
 }
 
+ll f(int x)
+{
+    return pre[x] + 2 * k * (m - x) - (pre[n] - pre[n - (m - x)]);
+}
+
+int min_f(int left, int right)
+{
+    int ans = 0;
+    while (left <= right)
+    {
+        ll m1 = left + (right - left) / 3;
+        ll m2 = right - (right - left) / 3;
+        if (f(m1) <= f(m2))
+        {
+            ans = m1;
+            right = m2 - 1;
+        }
+        else
+            left = m1 + 1;
+    }
+    return f(ans);
+}
+
 void sub2()
 {
-    
+    while (q--)
+    {
+        std::cin >> k >> m;
+        std::cout << min_f(0, m) << "\n";
+    }
 }
 
 __Thien_dep_trai__
@@ -102,15 +130,13 @@ __Thien_dep_trai__
     {
         std::cin >> a[i];
     }
-
-    if (q <= 1000)
+    std::sort(a + 1, a + n + 1);
+    for (int i = 1; i <= n; i++)
     {
-        sub1();
+        pre[i] = pre[i - 1] + a[i];
     }
-    else
-    {
 
-    }
+    sub2();
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
