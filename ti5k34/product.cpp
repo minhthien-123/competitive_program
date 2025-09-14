@@ -12,18 +12,20 @@ int n;
 ii a[maxn], b[maxn];
 int f[maxn];
 
-bool check(int x) {
-
+bool check(int x)
+{
     for (int i = 1; i < n; i++)
     {
         int l = i + 1, r = n, pos = n + 1;
         while (l <= r)
         {
             int mid = (l + r) / 2;
-            if (a[i].fi * a[mid].fi >= x) {
+            if (a[i].fi * a[mid].fi >= x)
+            {
                 pos = mid;
                 r = mid - 1;
-            } else
+            }
+            else
             {
                 l = mid + 1;
             }
@@ -68,16 +70,16 @@ bool check1(int x)
     return false;
 }
 
-
 signed main()
 {
     std::ios_base::sync_with_stdio(0);
-    std::cin.tie(0); std::cout.tie(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
 
-    if (std::fopen(task".inp", "r"))
+    if (std::fopen(task ".inp", "r"))
     {
-        std::freopen(task".inp", "r", stdin);
-        std::freopen(task".out", "w", stdout);
+        std::freopen(task ".inp", "r", stdin);
+        std::freopen(task ".out", "w", stdout);
     }
 
     std::cin >> n;
@@ -98,7 +100,7 @@ signed main()
         f[i] = std::max(f[i + 1], a[i].se);
     }
 
-    //std::cout << check(9);
+    // std::cout << check(9);
 
     int l = 1, r = 1e18, ans = 0;
 
