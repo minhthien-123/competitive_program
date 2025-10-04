@@ -1,30 +1,31 @@
 #include <bits/stdc++.h>
+using namespace std;
 #define task "heap1"
 #define int long long
-#define ii std::pair<int, int>
+#define ii pair<int, int>
 #define fi first
 #define se second
 #define pb push_back
 
 signed main()
 {
-	std::ios_base::sync_with_stdio(0);
-	std::cin.tie(0);
-	std::cout.tie(0);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
 
-	//std::freopen(task ".inp", "r", stdin);
-	//std::freopen(task ".out", "w", stdout);
+	//freopen(task ".inp", "r", stdin);
+	//freopen(task ".out", "w", stdout);
 
 	int t;
-	std::cin >> t;
+	cin >> t;
 	while (t--)
 	{
 		int n;
-		std::cin >> n;
-		std::priority_queue<int, std::vector<int>, std::greater<int>> heap;
+		cin >> n;
+		priority_queue<int, vector<int>, greater<int>> heap;
 		for (int i = 1, x; i <= n; i++)
 		{
-			std::cin >> x;
+			cin >> x;
 			heap.push(x);
 		}
 
@@ -38,12 +39,12 @@ signed main()
 
 			ans += a + b;
 
-			std::cout << a << " " << b << "\n";
+			cout << a << " " << b << "\n";
 
 			heap.push(a + b);
 		}
 
-		std::cout << ans << "\n";
+		cout << ans << "\n";
 	}
 
 	return 0;
