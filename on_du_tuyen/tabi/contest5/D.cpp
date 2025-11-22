@@ -79,7 +79,7 @@ struct FenwickTree
         {
             res += bit[r];
             if (res >= (1ll << 60))
-                res %= mod; // defensive
+                res %= mod;
         }
         return res % mod;
     }
