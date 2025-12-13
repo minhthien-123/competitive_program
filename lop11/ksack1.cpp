@@ -2,55 +2,107 @@
 #define task "ksack1"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define pll std::pair<ll, ll>
+#define vi std::vector<int>
+#define vii std::vector<ii>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+#define sz(x) ((int)(x).size())
+#define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 105;
-const ll inf = 1e18;
+const int maxn = 1e2;
+const ll inf = 1e9;
+const int mod = 1e9 + 7;
+const int inv = (mod + 1) / 2;
+const int lg = 20;
 
+ll add(ll x, ll y)
+{
+    return (x + y + 2 * mod) % mod;
+}
+ll sub(ll x, ll y)
+{
+    return (x - y + 2 * mod) % mod;
+}
+ll mul(ll x, ll y)
+{
+    return (x * y) % mod;
+}
+ll power(ll x, ll y)
+{
+    if (y == 0)
+    {
+        return 1;
+    }
+    ll tmp = power(x, y / 2);
+    if (y % 2 == 0)
+    {
+        return (tmp * tmp) % mod;
+    }
+    else
+    {
+        return tmp * tmp % mod * x % mod;
+    }
+}
+
+std::vector<int> adj[maxn + 7];
 int n, m, id;
-ll pre[maxn], res;
-int p[maxn], r[maxn];
-bool vis[maxn];
+ll pre[maxn + 7], res;
+int p[maxn + 7], r[maxn + 7];
+bool vis[maxn + 7];
 
 struct pt
 {
     int w, v, id;
-    friend bool operator<(pt a, pt b)
+    friend int operator<(pt a, pt b)
     {
-        return a.v * b.w > b.v * a.w;
+        return a.v > b.v;
     }
 };
 
-pt a[maxn];
+pt a[maxn + 7];
 
-void Try(int i, int w, ll sum)
+void Try(int i = 1, int w = 0, ll sum = 0)
 {
-    if (sum > res)
-    {
-        res = sum;
-        id = 0;
-        for (int j = 1; j <= n; j++)
-        {
-            if (vis[j])
-                r[++id] = a[j].id;
-        }
-    }
-
     if (i > n)
-        return;
-
-    if (sum + pre[n] - pre[i - 1] <= res)
-        return;
-
-    if (w + a[i].w <= m)
     {
-        vis[i] = true;
-        Try(i + 1, w + a[i].w, sum + a[i].v);
-        vis[i] = false;
+        if (sum > res)
+        {
+            res = sum;
+            id = 0;
+            for (int j = 1; j <= n; j++)
+            {
+                if (vis[j])
+                {
+                    r[++id] = a[j].id;
+                }
+            }
+        }
+        return;
     }
-
-    if (w + p[i + 1] <= m)
+    else
     {
+        if (sum + pre[n] - pre[i - 1] <= res)
+        {
+            return;
+        }
+
         Try(i + 1, w, sum);
+        if (w + a[i].w <= m)
+        {
+            vis[i] = true;
+            Try(i + 1, w + a[i].w, sum + a[i].v);
+            vis[i] = false;
+        }
+
+        if (w + p[i] > m)
+        {
+            Try(n, w, sum);
+        }
     }
 }
 
@@ -58,6 +110,7 @@ __Thien_dep_trai__
 {
     std::ios_base::sync_with_stdio(0);
     std::cin.tie(0);
+    std::cout.tie(0);
 
     if (std::fopen(task ".inp", "r"))
     {
@@ -73,21 +126,13 @@ __Thien_dep_trai__
     }
 
     std::sort(a + 1, a + n + 1);
+    p[n + 1] = inf;
 
-    pre[0] = 0;
     for (int i = 1; i <= n; i++)
     {
         pre[i] = pre[i - 1] + a[i].v;
+        p[i] = std::min(p[i - 1], a[i].w);
     }
-
-    p[n + 1] = 2e9;
-    for (int i = n; i >= 1; i--)
-    {
-        p[i] = std::min(p[i + 1], a[i].w);
-    }
-
-    res = 0;
-    Try(1, 0, 0);
 
     std::cout << res << "\n";
     std::sort(r + 1, r + id + 1);
@@ -95,6 +140,8 @@ __Thien_dep_trai__
     {
         std::cout << r[i] << " ";
     }
+
+    std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
     return 0;
 }

@@ -1,56 +1,92 @@
 #include <bits/stdc++.h>
-#define task "ksack1"
+#define task "abc"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
+#define ii std::pair<int, int>
+#define iii std::pair<ii, int>
+#define pll std::pair<ll, ll>
+#define vi std::vector<int>
+#define vii std::vector<ii>
+#define fi first
+#define se second
+#define pb push_back
+#define ins insert
+#define sz(x) ((int)(x).size())
+#define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 105;
-const ll inf = 1e18;
+const int maxn = 1e3;
+const ll inf = 1e3;
+const int mod = 1e9 + 7;
+const int base = 331;
 
-int n, m, id;
-ll pre[maxn], res;
-int p[maxn], r[maxn];
-bool vis[maxn];
+std::vector<int> adj[maxn + 7];
+int n, mx = inf;
+std::string save = "", s;
+ll Pow[maxn + 7], Hash[maxn + 7];
 
-struct pt
+ll gethash(int j, int i)
 {
-    int w, v, id;
-    friend bool operator<(pt a, pt b)
-    {
-        return a.v * b.w > b.v * a.w;
-    }
-};
+    return (Hash[i] - Hash[j - 1] * Pow[i - j + 1] % mod + mod) % mod;
+}
 
-pt a[maxn];
-
-void Try(int i, int w, ll sum)
+bool check(std::string s)
 {
-    if (sum > res)
+    int i = s.size() - 1;
+    for (int len = 1; len <= (s.size() - 1) / 2; len++)
     {
-        res = sum;
-        id = 0;
-        for (int j = 1; j <= n; j++)
+        if (gethash(i - len + 1, i) == gethash(i - 2 * len + 1, i - len))
         {
-            if (vis[j])
-                r[++id] = a[j].id;
+            return false;
         }
+    }
+    return true;
+}
+
+void calc(int i = 1, int d = 0)
+{
+    if (!check(s))
+    {
+        return;
     }
 
     if (i > n)
-        return;
-
-    if (sum + pre[n] - pre[i - 1] <= res)
-        return;
-
-    if (w + a[i].w <= m)
     {
-        vis[i] = true;
-        Try(i + 1, w + a[i].w, sum + a[i].v);
-        vis[i] = false;
+        if (d < mx)
+        {
+            mx = d;
+            save = s;
+        }
+        return;
     }
 
-    if (w + p[i + 1] <= m)
+    if (d + (n - i + 1) / 4 + (n - i + 1) / 54 + (n - i + 1) / 180 + (n - i + 1) / 450 >= mx || mx * 4 <= n + n / 50)
     {
-        Try(i + 1, w, sum);
+        return;
+    }
+
+    for (char x = 'A'; x <= 'C'; x++)
+    {
+        if (i >= 4 && s[i - 2] == x && (s[i - 4] == x || s[i - 5] == x) && x == 'C')
+        {
+            continue;
+        }
+        if (i >= 9 && s[i - 3] == x && s[i - 6] == x && s[i - 9] == x && x == 'C')
+        {
+            continue;
+        }
+        if (i >= 5 && s[i - 3] == x && s[i - 5] == x && x == 'C')
+        {
+            continue;
+        }
+        if (i >= 6 && s[i - 2] == x && s[i - 4] == x && s[i - 6] == x)
+        {
+            continue;
+        }
+        Pow[i] = Pow[i - 1] * base % mod;
+        Hash[i] = (Hash[i - 1] * base + x - 'a') % mod;
+        s = s + x;
+        calc(i + 1, d + (x == 'C'));
+        s.pop_back();
     }
 }
 
@@ -58,6 +94,7 @@ __Thien_dep_trai__
 {
     std::ios_base::sync_with_stdio(0);
     std::cin.tie(0);
+    std::cout.tie(0);
 
     if (std::fopen(task ".inp", "r"))
     {
@@ -65,36 +102,20 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    std::cin >> n >> m;
-    for (int i = 1; i <= n; i++)
+    std::cin >> n;
+    Pow[0] = 1;
+    s = " ";
+
+    calc();
+
+    if (save.size() > 0)
     {
-        std::cin >> a[i].w >> a[i].v;
-        a[i].id = i;
+        save.erase(save.begin());
     }
 
-    std::sort(a + 1, a + n + 1);
+    std::cout << save << '\n' << mx;
 
-    pre[0] = 0;
-    for (int i = 1; i <= n; i++)
-    {
-        pre[i] = pre[i - 1] + a[i].v;
-    }
-
-    p[n + 1] = 2e9;
-    for (int i = n; i >= 1; i--)
-    {
-        p[i] = std::min(p[i + 1], a[i].w);
-    }
-
-    res = 0;
-    Try(1, 0, 0);
-
-    std::cout << res << "\n";
-    std::sort(r + 1, r + id + 1);
-    for (int i = 1; i <= id; i++)
-    {
-        std::cout << r[i] << " ";
-    }
+    std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
     return 0;
 }
