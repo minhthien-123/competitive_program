@@ -14,7 +14,7 @@
 #define sz(x) ((int)(x).size())
 #define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 1e6;
+const int maxn = 2e5;
 const ll inf = 1e18;
 const int mod = 1e9 + 7;
 const int inv = (mod + 1) / 2;
@@ -50,29 +50,13 @@ ll power(ll x, ll y)
 }
 
 std::vector<int> adj[maxn + 7];
-int n, a[maxn + 7];
-bool prime[maxn + 7];
-
-void sieve()
-{
-    for (int i = 2; i <= maxn; i++)
-    {
-        prime[i] = true;
-    }
-    for (int i = 2; i * i <= maxn; i++)
-    {
-        if (prime[i])
-        {
-            for (int j = i * i; j <= maxn; j += i)
-            {
-                prime[j] = false;
-            }
-        }
-    }
-}
+int t;
+int n;
+ll a[maxn + 7];
 
 __Thien_dep_trai__
 {
+    std::cerr << "\n";
     std::ios_base::sync_with_stdio(0);
     std::cin.tie(0);
     std::cout.tie(0);
@@ -83,35 +67,45 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    sieve();
-
-    std::cin >> n;
-    for (int i = 2 * n; i >= 2; i--)
+    std::cin >> t;
+    while (t--)
     {
-        if (!prime[i])
+        std::cin >> n;
+        for (int i = 1;  i <= n; i++)
         {
-            continue;
+            std::cin >> a[i];
         }
-        int l = std::max(1, i - n);
-        int r = std::min(n, i - 1);
-        for (int j = l; j <= r; j++)
+
+        bool flag1 = false, flag2 = false;
+        for (int i = 1; i <= n; i++)
         {
-            int x = i - j;
-            if (a[j] == 0 && a[x] == 0)
+            if (a[i] % 2 == 0)
             {
-                a[j] = x;
-                a[x] = j;
+                flag1 = true;
+            }
+            else
+            {
+                flag2 = true;
             }
         }
-    }
-    for (int i = 1; i <= n; i++)
-    {
-        std::cout << i << " ";
-    }
-    std::cout << "\n";
-    for (int i = 1; i <= n; i++)
-    {
-        std::cout << a[i] << " ";
+
+        if (flag1 && flag2)
+        {
+            std::sort(a + 1, a + n + 1);
+            for (int i = 1; i <= n; i++)
+            {
+                std::cout << a[i] << " ";
+            }
+            std::cout << "\n";
+        }
+        else
+        {
+            for (int i = 1; i <= n; i++)
+            {
+                std::cout << a[i] << " ";
+            }
+            std::cout << "\n";
+        }
     }
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
