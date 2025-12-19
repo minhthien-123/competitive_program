@@ -14,7 +14,7 @@
 #define sz(x) ((int)(x).size())
 #define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 1e6;
+const int maxn = 8e3;
 const ll inf = 1e18;
 const int mod = 1e9 + 7;
 const int inv = (mod + 1) / 2;
@@ -50,13 +50,18 @@ ll power(ll x, ll y)
 }
 
 std::vector<int> adj[maxn + 7];
-int n, m;
-ll a[maxn + 7], b[maxn + 7], cnt[maxn + 7];
-ll ans = 0;
-ll maxa = 0, minb = inf;
+int n;
+
+struct pt
+{
+    ll v, w;
+}a[maxn + 7];
+
+ll dp[maxn + 7];
 
 __Thien_dep_trai__
 {
+    std::cerr << "\n";
     std::ios_base::sync_with_stdio(0);
     std::cin.tie(0);
     std::cout.tie(0);
@@ -67,36 +72,44 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    std::cin >> n >> m;
-    for (int i = 1; i <= n; i++)
+    int t;
+    std::cin >> t;
+    while (t--)
     {
-        std::cin >> a[i];
-        ans += a[i] * m;
-        cnt[i] = m - 1;
-        maxa = std::max(maxa, (ll)a[i]);
+        std::cin >> n;
+        for (int i = 1; i <= n; i++)
+        {
+            std::cin >> a[i].v;
+        }
+        ll sum = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            std::cin >> a[i].w;
+            sum += a[i].w;
+        }
+
+        memset(dp, 0, sizeof dp);
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (a[j].v <= a[i].v)
+                {
+                    dp[i] = std::max(dp[i], dp[j] + a[i].w);
+                }
+            }
+        }
+
+        ll ans = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            ans = std::max(ans, dp[i]);
+        }
+
+        std::cout << sum - ans << "\n";
+
+        //std::cout << ans << "\n";
     }
-
-    std::sort(a + 1, a + n + 1);
-
-    for (int i = 1; i <= m; i++)
-    {
-        std::cin >> b[i];
-        ans += b[i] - maxa;
-        minb = std::min(minb, (ll)b[i]);
-    }
-
-    if (maxa > minb)
-    {
-        std::cout << -1;
-        return 0;
-    }
-
-    if (maxa < minb)
-    {
-        ans += maxa - a[n - 1];
-    }
-
-    std::cout << ans;
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
