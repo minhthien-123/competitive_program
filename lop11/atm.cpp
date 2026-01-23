@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "subsetsum"
+#define task "atm"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
@@ -14,7 +14,7 @@
 #define sz(x) ((int)(x).size())
 #define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 1e2;
+const int maxn = 40;
 const ll inf = 1e18;
 const int mod = 1e9 + 7;
 const int inv = (mod + 1) / 2;
@@ -54,35 +54,39 @@ int n;
 ll m;
 ll a[maxn + 7], pre[maxn + 7];
 std::vector<ll> v;
-bool flag = false;
+ll ans = 0;
 
-void Try(int i = 1, ll sum = 0)
+void TryX(int i = 1, int lim = n / 2, ll sum = 0)
 {
-    if (flag)
+    if (sum > m)
+    {
+        return;
+    }
+    if (i > lim)
+    {
+        v.pb(sum);
+    }
+    else
+    {
+        TryX(i + 1, lim, sum);
+        TryX(i + 1, lim, sum + a[i]);
+    }
+}
+
+void TryY(int i = n / 2 + 1, ll sum = 0)
+{
+    if (sum > m)
     {
         return;
     }
     if (i > n)
     {
-        if (sum == m)
-        {
-            std::cout << "YES\n";
-            for (int j : v)
-            {
-                std::cout << j << " ";
-            }
-            flag = true;
-        }
+        ans += std::upper_bound(v.begin(), v.end(), m - sum) - std::lower_bound(v.begin(), v.end(), m - sum);
     }
     else
     {
-        Try(i + 1, sum);
-        if (sum + pre[n] - pre[i - 1] >= m)
-        {
-            v.pb(i);
-            Try(i + 1, sum + a[i]);
-            v.pop_back();
-        }
+        TryY(i + 1, sum);
+        TryY(i + 1, sum + a[i]);
     }
 }
 
@@ -102,14 +106,13 @@ __Thien_dep_trai__
     for (int i = 1; i <= n; i++)
     {
         std::cin >> a[i];
-        pre[i] = pre[i - 1] + a[i];
     }
 
-    Try();
-    if (!flag)
-    {
-        std::cout << "NO";
-    }
+    TryX();
+    std::sort(v.begin(), v.end());
+    TryY();
+
+    std::cout << ans;
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
 
