@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "cntpal"
+#define task "bgrid"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
@@ -14,7 +14,7 @@
 #define sz(x) ((int)(x).size())
 #define TIME (1.0 * clock() / CLOCKS_PER_SEC)
 
-const int maxn = 5e3;
+const int maxn = 2e5;
 const ll inf = 1e18;
 const int mod = 1e9 + 7;
 const int inv = (mod + 1) / 2;
@@ -50,9 +50,8 @@ ll power(ll x, ll y)
 }
 
 std::vector<int> adj[maxn + 7];
-int n, q;
-std::string s;
-int dp[maxn + 7][maxn + 7];
+int n, p, q;
+std::vector<int> v1, v2;
 
 __Thien_dep_trai__
 {
@@ -66,44 +65,39 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    std::cin >> s;
-    int n = sz(s);
-    s = " " + s;
+    std::cin >> n >> p;
+    while (p--)
+    {
+        int t, w;
+        std::cin >> t >> w;
+        if (t == 1)
+        {
+            v1.pb(w);
+        }
+        else
+        {
+            v2.pb(w);
+        }
+    }
 
+    std::sort(v1.begin(), v1.end());
+    std::sort(v2.begin(), v2.end());
+
+    int q;
     std::cin >> q;
-
-    for (int k = 1; k <= n; k++)
-    {
-        int l = k, r = k;
-        while (l >= 1 && r <= n && s[l] == s[r])
-        {
-            dp[l][r]++;
-            l--;
-            r++;
-        }
-
-        l = k, r = k + 1;
-        while (l >= 1 && r <= n && s[l] == s[r])
-        {
-            dp[l][r]++;
-            l--;
-            r++;
-        }
-    }
-
-    for (int i = n; i >= 1; i--)
-    {
-        for (int j = i + 1; j <= n; j++)
-        {
-            dp[i][j] += dp[i + 1][j] + dp[i][j - 1] - dp[i + 1][j - 1];
-        }
-    }
 
     while (q--)
     {
-        int l, r;
-        std::cin >> l >> r;
-        std::cout << dp[l][r] << "\n";
+        int x, y;
+        std::cin >> x >> y;
+
+        int u = std::max(x, y);
+        int v = std::min(x, y);
+
+        int cnt1 = v1.end() - std::lower_bound(v1.begin(), v1.end(), u);
+        int cnt2 = std::upper_bound(v2.begin(), v2.end(), v) - v2.begin();
+
+        std::cout << ((cnt1 + cnt2) % 2) << "\n";
     }
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
