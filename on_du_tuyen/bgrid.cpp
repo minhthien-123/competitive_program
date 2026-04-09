@@ -94,7 +94,7 @@ __Thien_dep_trai__
         int u = std::max(x, y);
         int v = std::min(x, y);
 
-        int cnt1 = v1.end() - std::lower_bound(v1.begin(), v1.end(), u);
+        int cnt1 = v1.end(a) - std::lower_bound(v1.begin(), v1.end(), u);
         int cnt2 = std::upper_bound(v2.begin(), v2.end(), v) - v2.begin();
 
         std::cout << ((cnt1 + cnt2) % 2) << "\n";

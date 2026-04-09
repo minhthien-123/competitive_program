@@ -1,3 +1,4 @@
+
 void init(int v)
 {
     par[v] = v;
