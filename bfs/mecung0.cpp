@@ -44,7 +44,7 @@ void bfs(ii s){
 		}
 	}
 }
- 
+
 
 signed main(){
 	std::ios_base::sync_with_stdio(0);
@@ -81,6 +81,6 @@ signed main(){
 //1 0 0 1 0 1 1
 //1 0 1 0 0 1 0
 //1 0 0 0 1 0 1
-//0 0 1 0 A A A 
+//0 0 1 0 A A A
 //1 1 0 1 A 1 A
 //1 1 0 1 1 A A
