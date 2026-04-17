@@ -1,32 +1,38 @@
-
-void init(int v)
+struct DSU
 {
-    par[v] = v;
-    sz[v] = 1;
-}
-
-int acs(int v)
-{
-    if (v == par[v])
+    std::vector<int> par, sz;
+    DSU(int n)
     {
-        return v;
-    }
-    int p = acs(par[v]);
-    par[v] = p;
-    return p;
-}
+        par.resize(n + 1);
+        sz.assign(n + 1, 1);
 
-void join(int a, int b)
-{
-    a = acs(a);
-    b = acs(b);
-    if (a != b)
-    {
-        if (sz[a] < sz[b])
+        for (int i = 0; i <= n; i++)
         {
-            std::swap(a, b);
+            par[i] = i;
+            if (f[i] == 1)
+            {
+                cnt[i] = 1;
+            }
         }
-        par[b] = a;
-        sz[a] += sz[b];
     }
-}
+
+    int acs(int v)
+    {
+        return v == par[v] ? v : par[v] = acs(par[v]);
+    }
+
+    void join(int a, int b)
+    {
+        a = acs(a);
+        b = acs(b);
+        if (a != b)
+        {
+            if (sz[a] < sz[b])
+            {
+                std::swap(a, b);
+            }
+            par[b] = a;
+            sz[a] += sz[b];
+        }
+    }
+};
