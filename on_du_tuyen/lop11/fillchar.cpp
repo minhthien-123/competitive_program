@@ -62,6 +62,7 @@ void init()
     for (int i = 0; i <= n + 1; i++)
     {
         par[i] = i;
+        ans[i] = 1;
     }
 }
 
