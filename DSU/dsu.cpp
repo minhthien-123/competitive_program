@@ -1,18 +1,16 @@
 struct DSU
 {
     std::vector<int> par, sz;
+
     DSU(int n)
     {
         par.resize(n + 1);
-        sz.assign(n + 1, 1);
+        sz.assign(n + 1,1);
 
         for (int i = 0; i <= n; i++)
         {
             par[i] = i;
-            if (f[i] == 1)
-            {
-                cnt[i] = 1;
-            }
+            sz[i] = 1;
         }
     }
 
