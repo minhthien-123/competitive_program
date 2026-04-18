@@ -45,7 +45,7 @@ void join(int u, int v, int w)
     v = find(v);
     if (u == v)
     {
-        return;
+        return;                                         
     }
 
     if (sz[u] < sz[v])
