@@ -91,9 +91,9 @@ __Thien_dep_trai__
     std::cin >> n >> k;
 
     int cnt = 0;
-    for (int i = 1; i <= n; i++)
+    for (int i = 1; i + k <= n; i++)
     {
-        if (isprime[i] && isprime[i - k])
+        if (isprime[i] && isprime[i + k])
         {
             cnt++;
         }
