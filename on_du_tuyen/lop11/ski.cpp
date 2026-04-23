@@ -3,7 +3,7 @@
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
-#define iii std::pair<int, ii>
+#define iii std::pair<ii, int>
 #define pll std::pair<ll, ll>
 #define vi std::vector<int>
 #define vii std::vector<ii>
@@ -13,14 +13,16 @@
 #define ins insert
 #define sz(x) ((int)(x).size())
 #define TIME (1.0 * clock() / CLOCKS_PER_SEC)
+#define bit_set(x, pos) ((x) |= (1ULL << (pos)))
+#define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 
-const int maxn = 1e6;
+const int maxn = 500;
 const ll inf = 1e18;
 const int mod = 1e9 + 7;
 const int inv = (mod + 1) / 2;
 const int lg = 20;
-const int dx[] = {-1, 1, 0, 0, -1, -1, 1, 1};
-const int dy[] = {0, 0, -1, 1, -1, 1, -1, 1};
+const int dx[] = {0, 1, 0, -1, -1, -1, 1, 1};
+const int dy[] = {1, 0, -1, 0, -1, 1, -1, 1};
 
 ll add(ll x, ll y)
 {
@@ -52,10 +54,20 @@ ll power(ll x, ll y)
 }
 
 std::vector<int> adj[maxn + 7];
-std::vector<std::pair<ll, ii>> vec;
 int n, m, t;
-int a[maxn + 7];
-bool f[maxn + 7];
+ll a[maxn * maxn + 7];
+bool f[maxn * maxn + 7];
+
+int idx(int x, int y)
+{
+    return (x - 1) * n + y;
+}
+
+bool valid(int x, int y)
+{
+    return x >= 1 && x <= m && y >= 1 && y <= n;
+}
+
 ll ans = 0;
 
 struct DSU
@@ -64,16 +76,21 @@ struct DSU
 
     DSU(int n)
     {
-        par.resize(n + 1);
-        sz.assign(n + 1, 1);
-        cnt.assign(n + 1, 0);
+        par.resize(n + 7);
+        sz.resize(n + 7);
+        cnt.resize(n + 7);
 
-        for (int i = 0; i <= n; i++)
+        for (int i = 0; i <= n + 1; i++)
         {
             par[i] = i;
+            sz[i] = 1;
             if (f[i] == 1)
             {
                 cnt[i] = 1;
+            }
+            else
+            {
+                cnt[i] = 0;
             }
         }
     }
@@ -93,28 +110,30 @@ struct DSU
             {
                 std::swap(a, b);
             }
-            par[b] = a;
-
-
             if (sz[a] < t && sz[a] + sz[b] >= t)
             {
-                ans += cnt[a] * 1LL * w;
+                ans += 1LL * w * cnt[a];
             }
             if (sz[b] < t && sz[a] + sz[b] >= t)
             {
-                ans += cnt[b] * 1LL * w;
+                ans += 1LL * w * cnt[b];
             }
 
+            par[b] = a;
             sz[a] += sz[b];
             cnt[a] += cnt[b];
         }
     }
 };
 
-int idx(int x, int y)
+struct Edge
 {
-    return (x - 1) * m + y;
-}
+    int w, u, v;
+    friend bool operator<(Edge x, Edge y)
+    {
+        return x.w < y.w;
+    }
+};
 
 __Thien_dep_trai__
 {
@@ -128,41 +147,43 @@ __Thien_dep_trai__
         std::freopen(task ".out", "w", stdout);
     }
 
-    std::cin >> n >> m >> t;
+    std::cin >> m >> n >> t;
     for (int i = 1; i <= m * n; i++)
     {
         std::cin >> a[i];
     }
+
     for (int i = 1; i <= m * n; i++)
     {
         std::cin >> f[i];
     }
 
-    DSU dsu((m + 1) * (n + 1));
+    std::vector<Edge> edges;
 
-    for (int i = 1; i <= n; i++)
+    for (int i = 1; i <= m; i++)
     {
-        for (int j = 1; j <= m; j++)
+        for (int j = 1; j <= n; j++)
         {
             int u = idx(i, j);
-            if (i < n)
+            for (int k = 0; k < 4; k++)
             {
-                int v = idx(i + 1, j);
-                vec.pb({llabs(a[u] - a[v]), {u, v}});
-            }
-            if (j < m)
-            {
-                int v = idx(i, j + 1);
-                vec.pb({llabs(a[u] - a[v]), {u, v}});
+                int ni = i + dx[k];
+                int nj = j + dy[k];
+                if (valid(ni, nj))
+                {
+                    int v = idx(ni, nj);
+                    edges.pb({abs(a[v] - a[u]), u, v});
+                }
             }
         }
     }
 
-    std::sort(vec.begin(), vec.end());
+    std::sort(edges.begin(), edges.end());
 
-    for (auto e : vec)
+    DSU dsu(m * n);
+    for (auto [w, u, v] : edges)
     {
-        dsu.join(e.se.fi, e.se.se, e.fi);
+        dsu.join(u, v, w);
     }
 
     std::cout << ans;
