@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "dijkstra"
+#define task "lmove"
 #define int long long
 #define ii std::pair<int, int>
 #define iii std::pair<ii, int>
