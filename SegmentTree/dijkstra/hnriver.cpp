@@ -24,7 +24,7 @@ void dijk(int s)
         d[i] = inf;
         par[i] = -1;
     }
-    
+
     d[s] = 0;
     std::priority_queue<ii, std::vector<ii>, std::greater<>> pq;
     pq.push({d[s], s});
