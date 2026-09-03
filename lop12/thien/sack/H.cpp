@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 2e5;
+const int maxn = 1e6;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
