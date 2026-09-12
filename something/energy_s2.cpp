@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "energy"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 1e5;
+const int maxn = 100005;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -57,11 +57,33 @@ ll power(ll x, ll y)
 }
 
 int n;
-
+ll a[maxn], dp[maxn];
 
 void solve()
 {
-    
+    std::cin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        std::cin >> a[i];
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        dp[i] = -INF;
+    }
+    dp[0] = 0;
+
+    for (int i = 1; i <= n; i++)
+    {
+        ll min_val = a[i];
+        for (int j = i; j >= 1; j--)
+        {
+            min_val = std::min(min_val, a[j]);
+            dp[i] = std::max(dp[i], dp[j - 1] + a[i] - a[j] + min_val);
+        }
+    }
+
+    std::cout << dp[n] << "\n";
 }
 
 __Thien_dep_trai__
@@ -77,7 +99,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    //std::cin >> tt;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

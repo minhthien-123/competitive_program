@@ -1,3 +1,5 @@
+
+
 #include <bits/stdc++.h>
 #define task "hexgame"
 #define int long long
@@ -9,24 +11,24 @@
 #define ins insert
 
 const int maxn = 1e5;
-const int inf  = 1e18;
-const int mod  = 1e9 + 7;
-const int inv  = (mod + 1) / 2;
+const int inf = 1e18;
+const int mod = 1e9 + 7;
+const int inv = (mod + 1) / 2;
 const std::string base = "1238004765";
 
 int a[10][10] = {{0, 1, 5, 8, 7, 3}, {1, 2, 6, 9, 8, 4}};
 std::string s;
 
-
 signed main()
 {
     std::ios_base::sync_with_stdio(0);
-    std::cin.tie(0); std::cout.tie(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
 
-    if (std::fopen(task".inp", "r"))
+    if (std::fopen(task ".inp", "r"))
     {
-        std::freopen(task".inp", "r", stdin);
-        std::freopen(task".out", "w", stdout);
+        std::freopen(task ".inp", "r", stdin);
+        std::freopen(task ".out", "w", stdout);
     }
 
     for (int i = 1; i <= 10; i++)

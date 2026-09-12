@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "energy"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 1e5;
+const int maxn = 100005;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -57,11 +57,113 @@ ll power(ll x, ll y)
 }
 
 int n;
+int a[maxn], dp[maxn];
+int tree[4 * maxn], lazy[4 * maxn];
+int idx[maxn], top = 0;
 
+void push(int id)
+{
+    if (lazy[id] != 0)
+    {
+        tree[2 * id] += lazy[id];
+        lazy[2 * id] += lazy[id];
+        tree[2 * id + 1] += lazy[id];
+        lazy[2 * id + 1] += lazy[id];
+        lazy[id] = 0;
+    }
+}
+
+void update(int id, int l, int r, int u, int v, int val)
+{
+    if (l > v || r < u)
+    {
+        return;
+    }
+    if (u <= l && r <= v)
+    {
+        tree[id] += val;
+        lazy[id] += val;
+        return;
+    }
+    push(id);
+    int mid = l + (r - l) / 2;
+    update(2 * id, l, mid, u, v, val);
+    update(2 * id + 1, mid + 1, r, u, v, val);
+    tree[id] = std::max(tree[2 * id], tree[2 * id + 1]);
+}
+
+void update(int id, int l, int r, int pos, int val)
+{
+    if (l == r)
+    {
+        tree[id] = val;
+        lazy[id] = 0;
+        return;
+    }
+    push(id);
+    int mid = l + (r - l) / 2;
+    if (pos <= mid)
+    {
+        update(2 * id, l, mid, pos, val);
+    }
+    else
+    {
+        update(2 * id + 1, mid + 1, r, pos, val);
+    }
+    tree[id] = std::max(tree[2 * id], tree[2 * id + 1]);
+}
+
+int query(int id, int l, int r, int u, int v)
+{
+    if (l > v || r < u)
+    {
+        return -INF;
+    }
+    if (u <= l && r <= v)
+    {
+        return tree[id];
+    }
+    push(id);
+    int mid = l + (r - l) / 2;
+    return std::max(query(2 * id, l, mid, u, v), query(2 * id + 1, mid + 1, r, u, v));
+}
 
 void solve()
 {
-    
+    std::cin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        std::cin >> a[i];
+    }
+
+    for (int i = 1; i <= 4 * n; ++i)
+    {
+        tree[i] = -INF;
+        lazy[i] = 0;
+    }
+
+    top = 0;
+    idx[++top] = 0;
+
+    for (int i = 1; i <= n; i++)
+    {
+        update(1, 1, n, i, dp[i - 1] - a[i]);
+
+        while (top > 1 && a[idx[top]] > a[i])
+        {
+            int top_id = idx[top]; 
+            top--;                 
+            int pre = idx[top];    
+
+            update(1, 1, n, pre + 1, top_id, a[i] - a[top_id]);
+        }
+        update(1, 1, n, i, i, a[i]);
+        idx[++top] = i;
+
+        dp[i] = a[i] + query(1, 1, n, 1, i);
+    }
+
+    std::cout << dp[n];
 }
 
 __Thien_dep_trai__
@@ -77,7 +179,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    //std::cin >> tt;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

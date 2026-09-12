@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "V"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -57,11 +57,99 @@ ll power(ll x, ll y)
 }
 
 int n;
+std::vector<int> adj[maxn + 7];
 
+struct CentroidDecomposition
+{
+    int n;
+    std::vector<int> sz, par;
+    std::vector<int> cnt;
+    std::vector<int> sum, sump;
+    std::vector<bool> removed;
+    int ans = 0;
+
+    CentroidDecomposition(int n)
+    {
+        this->n = n;
+        sz.assign(n + 7, 0);
+        par.assign(n + 7, 0);
+        removed.assign(n + 7, false);
+    }
+
+    void add_edge(int u, int v)
+    {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void get_sz(int u, int p)
+    {
+        sz[u] = 1;
+        for (int v : adj[u])
+        {
+            if (v != p && !removed[v])
+            {
+                get_sz(v, u);
+                sz[u] += sz[v];
+            }
+        }
+    }
+
+    int get_centroid(int u, int p, int total_sz)
+    {
+        for (int v : adj[u])
+        {
+            if (v != p && !removed[v] && sz[v] > total_sz / 2)
+            {
+                return get_centroid(v, u, total_sz);
+            }
+        }
+        return u;
+    }
+
+    void get_sum(int u, int p, int depth)
+    {
+        sum[u] = depth;
+        sump[u] = depth;
+        for (int v : adj[u])
+        {
+            if (v != p && !removed[v])
+            {
+                get_sum(v, u, depth + 1);
+                sum[u] += sum[v];
+                sump[u] += sump[v];
+            }
+        }
+    }
+
+    void build(int u, int p = 0)
+    {
+        get_sz(u, 0);
+        int centroid = get_centroid(u, 0, sz[u]);
+
+        par[centroid] = p;
+        removed[centroid] = true;
+
+        for (int v : adj[centroid])
+        {
+            if (!removed[v])
+            {
+                build(v, centroid);
+            }
+        }
+    }
+};
 
 void solve()
 {
-    
+    std::cin >> n;
+    for (int i = 1; i < n; i++)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
 }
 
 __Thien_dep_trai__
@@ -77,7 +165,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    //std::cin >> tt;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

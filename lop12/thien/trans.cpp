@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "trans"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -56,11 +56,11 @@ ll power(ll x, ll y)
     }
 }
 
-int n;
-
+int a, b, d;
 
 void solve()
 {
+    std::cin >> a >> b >> d;
     
 }
 

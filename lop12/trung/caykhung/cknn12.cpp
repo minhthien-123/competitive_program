@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "cknn12"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -56,12 +56,21 @@ ll power(ll x, ll y)
     }
 }
 
-int n;
+int n, m;
+std::vector<ii> adj[maxn + 7];
 
+struct edge
+{
+    int u, v, w;
+    friend bool operator<(edge a, edge b)
+    {
+        return a.w < b.w;
+    }
+};
 
 void solve()
 {
-    
+    std::cin >> n >> m;
 }
 
 __Thien_dep_trai__

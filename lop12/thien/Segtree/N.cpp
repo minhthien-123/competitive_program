@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "D"
+#define task "N"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 1e5;
+const int maxn = 3e5;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -56,12 +56,82 @@ ll power(ll x, ll y)
     }
 }
 
-int n;
+struct pt
+{
+    int l, r, w;
+    friend bool operator<(pt a, pt b)
+    {
+        return a.w < b.w;
+    }
+};
 
+pt a[maxn + 7];
+int st[4 * maxn + 7], lz[4 * maxn + 7];
+int n, m;
+
+void push(int id)
+{
+    if (lz[id])
+    {
+        st[id * 2] += lz[id];
+        lz[id * 2] += lz[id];
+        st[id * 2 + 1] += lz[id];
+        lz[id * 2 + 1] += lz[id];
+        lz[id] = 0;
+    }
+}
+
+void update(int id, int l, int r, int u, int v, int val)
+{
+    if (v < l || r < u)
+    {
+        return;
+    }
+    if (u <= l && r <= v)
+    {
+        st[id] += val;
+        lz[id] += val;
+        return;
+    }
+    push(id);
+    int mid = (l + r) / 2;
+    update(id * 2, l, mid, u, v, val);
+    update(id * 2 + 1, mid + 1, r, u, v, val);
+    st[id] = std::min(st[id * 2], st[id * 2 + 1]);
+}
 
 void solve()
 {
-    
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++)
+    {
+        int l, r, w;
+        std::cin >> l >> r >> w;
+        a[i] = {l, r, w};
+    }
+
+    std::sort(a + 1, a + n + 1);
+
+    int ans = INF;
+    int j = 1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        while (j <= n && st[1] == 0)
+        {
+            update(1, 1, m - 1, a[j].l, a[j].r - 1, 1);
+            j++;
+        }
+
+        if (st[1] > 0)
+        {
+            ans = std::min(ans, a[j - 1].w - a[i].w);
+        }
+
+        update(1, 1, m - 1, a[i].l, a[i].r - 1, -1);
+    }
+
+    std::cout << ans;
 }
 
 __Thien_dep_trai__
@@ -77,7 +147,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    //std::cin >> tt;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

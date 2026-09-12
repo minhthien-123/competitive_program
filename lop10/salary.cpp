@@ -118,7 +118,7 @@ signed main()
             adj[w].pb(i);
             adj[i].pb(w);
         }
-        //update(1, 1, n, i, i, a[i]);
+        // update(1, 1, n, i, i, a[i]);
     }
 
     dfs(1, -1);
