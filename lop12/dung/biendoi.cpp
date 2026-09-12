@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
-#define task "pour"
-#define int long long
+#define task "biendoi"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
@@ -18,7 +17,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 20;
+const int maxn = 300;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -56,13 +55,71 @@ ll power(ll x, ll y)
     }
 }
 
-int v, n, m;
+std::string s;
+int n;
+int dp[maxn + 7][maxn + 7], mask[27][27];
+std::bitset<305> L[26][305], R[26][305];
+std::vector<ii> rules[26];
 
 void solve()
 {
-    std::cin >> v >> n >> m;
-    
-    
+    std::cin >> s >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        char c, p, q;
+        std::cin >> c >> p >> q;
+        rules[c - 'a'].push_back({p - 'a', q - 'a'});
+    }
+
+    for (int i = 0; i < sz(s); i++)
+    {
+        int c = s[i] - 'a';
+        L[c][i].set(i + 1);
+        R[c][i].set(i);
+    }
+
+    for (int len = 2; len <= sz(s); len++)
+    {
+        for (int i = 0; i + len - 1 < sz(s); i++)
+        {
+            int j = i + len - 1;
+
+            for (int c = 0; c < 26; c++)
+            {
+                if (L[c][i].test(j + 1))
+                {
+                    continue;
+                }
+
+                for (auto [p, q] : rules[c])
+                {
+                    if ((L[p][i] & R[q][j]).any())
+                    {
+
+                        L[c][i].set(j + 1);
+                        R[c][j].set(i);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    bool flag = false;
+    for (char c = 'a'; c <= 'z'; c++)
+    {
+        if (L[c - 'a'][0].test(sz(s)))
+        {
+            std::cout << c;
+            flag = true;
+        }
+    }
+
+    if (!flag)
+    {
+        std::cout << "No Solution.";
+    }
 }
 
 __Thien_dep_trai__
@@ -78,7 +135,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    //std::cin >> tt;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "pour"
+#define task "ctree"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 20;
+const int maxn = 1e4;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -56,12 +56,19 @@ ll power(ll x, ll y)
     }
 }
 
-int v, n, m;
+int n;
+std::vector<int> adj[maxn + 7];
 
 void solve()
 {
-    std::cin >> v >> n >> m;
-    
+    std::cin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
     
 }
 
