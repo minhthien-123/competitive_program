@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "pour"
+#define task "PIKACHU"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 20;
+const int maxn = 5000;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -56,70 +56,204 @@ ll power(ll x, ll y)
     }
 }
 
-int v, n, m, ans;
-int a[maxn + 7];
-int f[maxn + 7][50000 + 7];
-std::queue<ii> q;
+int n, m;
+int f[maxn][maxn], a[maxn][maxn];
+int d[maxn][maxn];
+std::vector<std::pair<ii, ii>> pairs;
 
-void pour(int x, int y, int val)
+int bfs(int s, int t, int sx, int sy, int k)
 {
-    for (int i = 0; i <= n; i++)
+    for (int i = 0; i <= n + 1; i++)
     {
-        if (a[i] > x + y)
+        for (int j = 0; j <= m + 1; j++)
         {
-            break;
-        }
-
-        int tmp = std::min(x + y - a[i], v - x - y);
-        if (f[i][tmp] == -1)
-        {
-            f[i][tmp] = val + 1;
-            q.push(ii(i, tmp));
+            d[i][j] = inf;
         }
     }
-}
 
-void bfs()
-{
-    memset(f, -1, sizeof f);
-    f[0][0] = 0;
-    q.push(ii(0, 0));
+    std::queue<ii> q;
+    d[s][t] = 0;
+    q.push({s, t});
 
     while (!q.empty())
     {
-        int x = q.front().fi;
-        int y = q.front().se;
+        int u = q.front().fi;
+        int v = q.front().se;
         q.pop();
-        int z = v - a[x] - y;
 
-        if (a[x] == m || y == m || z == m)
+        if (d[u][v] == k)
         {
-            ans = f[x][y];
-            return;
+            continue;
         }
 
-        pour(a[x], y, f[x][y]);
-        pour(a[x], z, f[x][y]);
-        pour(y, a[x], f[x][y]);
-        pour(y, z, f[x][y]);
-        pour(z, a[x], f[x][y]);
-        pour(z, y, f[x][y]);
+        for (int i = u + 1; i <= n + 1; i++)
+        {
+            if (i == sx && v == sy)
+            {
+                return d[u][v] + 1;
+            }
+            if (a[i][v] != 0)
+            {
+                break;
+            }
+            if (d[i][v] > d[u][v] + 1)
+            {
+                d[i][v] = d[u][v] + 1;
+                q.push({i, v});
+            }
+        }
+
+        for (int i = u - 1; i >= 0; i--)
+        {
+            if (i == sx && v == sy)
+            {
+                return d[u][v] + 1;
+            }
+            if (a[i][v] != 0)
+            {
+                break;
+            }
+            if (d[i][v] > d[u][v] + 1)
+            {
+                d[i][v] = d[u][v] + 1;
+                q.push({i, v});
+            }
+        }
+
+        for (int j = v + 1; j <= m + 1; j++)
+        {
+            if (u == sx && j == sy)
+            {
+                return d[u][v] + 1;
+            }
+            if (a[u][j] != 0)
+            {
+                break;
+            }
+            if (d[u][j] > d[u][v] + 1)
+            {
+                d[u][j] = d[u][v] + 1;
+                q.push({u, j});
+            }
+        }
+
+        for (int j = v - 1; j >= 0; j--)
+        {
+            if (u == sx && j == sy)
+            {
+                return d[u][v] + 1;
+            }
+            if (a[u][j] != 0)
+            {
+                break;
+            }
+            if (d[u][j] > d[u][v] + 1)
+            {
+                d[u][j] = d[u][v] + 1;
+                q.push({u, j});
+            }
+        }
     }
+    return inf;
+}
+
+bool check(int k)
+{
+    for (int i = 0; i < sz(pairs); i++)
+    {
+        int r1 = pairs[i].fi.fi;
+        int c1 = pairs[i].fi.se;
+        int r2 = pairs[i].se.fi;
+        int c2 = pairs[i].se.se;
+        a[r1][c1] = f[r1][c1];
+        a[r2][c2] = f[r2][c2];
+    }
+
+    int cnt = sz(pairs);
+    std::vector<bool> removed(sz(pairs), false);
+
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        for (int i = 0; i < sz(pairs); i++)
+        {
+            if (!removed[i])
+            {
+                int r1 = pairs[i].fi.fi;
+                int c1 = pairs[i].fi.se;
+                int r2 = pairs[i].se.fi;
+                int c2 = pairs[i].se.se;
+
+                if (bfs(r1, c1, r2, c2, k) <= k)
+                {
+                    a[r1][c1] = 0;
+                    a[r2][c2] = 0;
+                    removed[i] = true;
+                    changed = true;
+                    cnt--;
+                }
+            }
+        }
+    }
+
+    return cnt == 0;
 }
 
 void solve()
 {
-    std::cin >> v >> n >> m;
-    for (int i = 1; i <= n; i++)
+    std::cin >> n >> m;
+    std::map<int, ii> pos;
+    pairs.clear();
+
+    for (int i = 0; i <= n + 1; i++)
     {
-        std::cin >> a[i];
+        for (int j = 0; j <= m + 1; j++)
+        {
+            f[i][j] = 0;
+            a[i][j] = 0;
+        }
     }
 
-    a[++n] = v;
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= m; j++)
+        {
+            std::cin >> f[i][j];
+            a[i][j] = f[i][j];
+            if (f[i][j] != 0)
+            {
+                if (pos.count(f[i][j]))
+                {
+                    pairs.pb({pos[f[i][j]], {i, j}});
+                }
+                else
+                {
+                    pos[f[i][j]] = {i, j};
+                }
+            }
+        }
+    }
 
-    ans = -1;
-    bfs();
-    std::cout << ans;
+    int l = 1;
+    int r = 4;
+    int ans = -1;
+
+    while (l <= r)
+    {
+        int mid = (l + r) / 2;
+        if (check(mid))
+        {
+            ans = mid;
+            r = mid - 1;
+        }
+        else
+        {
+            l = mid + 1;
+        }
+    }
+
+    std::cout << ans << "\n";
 }
 
 __Thien_dep_trai__
@@ -135,7 +269,6 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
-    // std::cin >> tt;
     while (tt--)
     {
         solve();
