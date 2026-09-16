@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "PIKACHU"
+#define task "ballgame"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 5000;
+const int maxn = 1e3;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -57,215 +57,128 @@ ll power(ll x, ll y)
 }
 
 int n, m;
-int f[maxn][maxn], a[maxn][maxn];
-int d[maxn][maxn];
-std::vector<std::pair<ii, ii>> pairs;
+ii obs[maxn + 7], ball[maxn + 7];
+bool g[maxn + 7][maxn + 7];
+int d[maxn + 7][maxn + 7];
+int f[maxn + 7][maxn + 7];
+int cnt[maxn + 7][maxn + 7];
 
-int bfs(int s, int t, int sx, int sy, int k)
+int dist(ii a, ii b)
 {
-    for (int i = 0; i <= n + 1; i++)
+    return std::abs(a.fi - b.fi) + std::abs(a.se - b.se);
+}
+
+void bfs(int sx, int sy)
+{
+    std::queue<ii> q;
+    for (int i = 0; i <= 200; i++)
     {
-        for (int j = 0; j <= m + 1; j++)
+        for (int j = 0; j <= 200; j++)
         {
             d[i][j] = inf;
         }
     }
 
-    std::queue<ii> q;
-    d[s][t] = 0;
-    q.push({s, t});
+    d[sx][sy] = 0;
+    q.push({sx, sy});
 
-    while (!q.empty())
+    while (q.size())
     {
-        int u = q.front().fi;
-        int v = q.front().se;
+        auto tmp = q.front();
         q.pop();
+        int x = tmp.fi, y = tmp.se;
 
-        if (d[u][v] == k)
+        for (int k = 0; k < 4; k++)
         {
-            continue;
-        }
+            int nx = x + dx[k];
+            int ny = y + dy[k];
 
-        for (int i = u + 1; i <= n + 1; i++)
-        {
-            if (i == sx && v == sy)
+            if (nx < 0 || nx > 200 || ny < 0 || ny > 200)
             {
-                return d[u][v] + 1;
+                continue;
             }
-            if (a[i][v] != 0)
+            if (g[nx][ny])
             {
-                break;
+                continue;
             }
-            if (d[i][v] > d[u][v] + 1)
+            if (d[nx][ny] > d[x][y] + 1)
             {
-                d[i][v] = d[u][v] + 1;
-                q.push({i, v});
-            }
-        }
-
-        for (int i = u - 1; i >= 0; i--)
-        {
-            if (i == sx && v == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[i][v] != 0)
-            {
-                break;
-            }
-            if (d[i][v] > d[u][v] + 1)
-            {
-                d[i][v] = d[u][v] + 1;
-                q.push({i, v});
-            }
-        }
-
-        for (int j = v + 1; j <= m + 1; j++)
-        {
-            if (u == sx && j == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[u][j] != 0)
-            {
-                break;
-            }
-            if (d[u][j] > d[u][v] + 1)
-            {
-                d[u][j] = d[u][v] + 1;
-                q.push({u, j});
-            }
-        }
-
-        for (int j = v - 1; j >= 0; j--)
-        {
-            if (u == sx && j == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[u][j] != 0)
-            {
-                break;
-            }
-            if (d[u][j] > d[u][v] + 1)
-            {
-                d[u][j] = d[u][v] + 1;
-                q.push({u, j});
+                d[nx][ny] = d[x][y] + 1;
+                q.push({nx, ny});
             }
         }
     }
-    return inf;
-}
 
-bool check(int k)
-{
-    for (int i = 0; i < sz(pairs); i++)
+    for (int i = 0; i <= 200; i++)
     {
-        int r1 = pairs[i].fi.fi;
-        int c1 = pairs[i].fi.se;
-        int r2 = pairs[i].se.fi;
-        int c2 = pairs[i].se.se;
-        a[r1][c1] = f[r1][c1];
-        a[r2][c2] = f[r2][c2];
-    }
-
-    int cnt = sz(pairs);
-    std::vector<bool> removed(sz(pairs), false);
-
-    bool changed = true;
-    while (changed)
-    {
-        changed = false;
-        for (int i = 0; i < sz(pairs); i++)
+        for (int j = 0; j <= 200; j++)
         {
-            if (!removed[i])
+            if (d[i][j] < inf)
             {
-                int r1 = pairs[i].fi.fi;
-                int c1 = pairs[i].fi.se;
-                int r2 = pairs[i].se.fi;
-                int c2 = pairs[i].se.se;
-
-                if (bfs(r1, c1, r2, c2, k) <= k)
-                {
-                    a[r1][c1] = 0;
-                    a[r2][c2] = 0;
-                    removed[i] = true;
-                    changed = true;
-                    cnt--;
-                }
+                f[i][j] += d[i][j];
+                cnt[i][j]++;
             }
         }
     }
-
-    return cnt == 0;
 }
 
 void solve()
 {
-    std::cin >> n >> m;
-    std::map<int, ii> pos;
-    pairs.clear();
-
-    for (int i = 0; i <= n + 1; i++)
+    std::cin >> n;
+    for (int i = 1; i <= n; i++)
     {
-        for (int j = 0; j <= m + 1; j++)
+        std::cin >> obs[i].fi >> obs[i].se;
+    }
+    std::cin >> m;
+    for (int i = 1; i <= m; i++)
+    {
+        std::cin >> ball[i].fi >> ball[i].se;
+    }
+
+    if (n == 0)
+    {
+        std::vector<int> x, y;
+        for (int i = 1; i <= m; i++)
         {
-            f[i][j] = 0;
-            a[i][j] = 0;
+            x.pb(ball[i].fi);
+            y.pb(ball[i].se);
         }
+        std::sort(all(x));
+        std::sort(all(y));
+        int X = x[sz(x) / 2];
+        int Y = y[sz(y) / 2];
+        int res = 0;
+        for (int i = 1; i <= m; i++)
+        {
+            res += std::abs(ball[i].fi - X) + std::abs(ball[i].se - Y);
+        }
+        std::cout << res;
+        return;
     }
 
     for (int i = 1; i <= n; i++)
     {
-        for (int j = 1; j <= m; j++)
+        g[obs[i].fi][obs[i].se] = true;
+    }
+
+    for (int i = 1; i <= m; i++)
+    {
+        bfs(ball[i].fi, ball[i].se);
+    }
+
+    int ans = inf;
+    for (int x = 0; x <= 200; x++)
+    {
+        for (int y = 0; y <= 200; y++)
         {
-            std::cin >> f[i][j];
-            a[i][j] = f[i][j];
-            if (f[i][j] != 0)
+            if (!g[x][y] && cnt[x][y] == m)
             {
-                if (pos.count(f[i][j]))
-                {
-                    pairs.pb({pos[f[i][j]], {i, j}});
-                }
-                else
-                {
-                    pos[f[i][j]] = {i, j};
-                }
+                ans = std::min(ans, f[x][y]);
             }
         }
     }
 
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= m; j++)
-        {
-            if (pos[f[i][j]] == ii(i, j))
-            {
-                f[i][j] = 0;
-                a[i][j] = 0;
-            }
-        }
-    }
-
-    int l = 1;
-    int r = 4;
-    int ans = -1;
-
-    while (l <= r)
-    {
-        int mid = (l + r) / 2;
-        if (check(mid))
-        {
-            ans = mid;
-            r = mid - 1;
-        }
-        else
-        {
-            l = mid + 1;
-        }
-    }
-
-    std::cout << ans << "\n";
+    std::cout << (ans == inf ? -1 : ans);
 }
 
 __Thien_dep_trai__
@@ -281,6 +194,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();

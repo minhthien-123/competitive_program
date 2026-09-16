@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "PIKACHU"
+#define task "O"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -18,7 +18,7 @@
 #define bit_clear(x, pos) ((x) &= ~(1ULL << (pos)))
 #define all(x) x.begin(), x.end()
 
-const int maxn = 5000;
+const int maxn = 2e5;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
@@ -56,216 +56,127 @@ ll power(ll x, ll y)
     }
 }
 
-int n, m;
-int f[maxn][maxn], a[maxn][maxn];
-int d[maxn][maxn];
-std::vector<std::pair<ii, ii>> pairs;
+int n, q;
+int a[maxn + 7];
 
-int bfs(int s, int t, int sx, int sy, int k)
+struct PersistentSegTree
 {
-    for (int i = 0; i <= n + 1; i++)
+    // Cây IT bền thủy (Persistent Segment Tree).
+    // Mỗi lần gọi hàm update sẽ sinh ra một Ver mới, gốc rễ của Ver i nằm ở mảng roots[i].
+    // Khởi tạo: roots[0] = seg.build(1, N);
+    // Cập nhật: roots[i] = seg.update(roots[i-1], 1, N, pos, val);
+    // Truy vấn trên version ver: ans = seg.query(roots[ver], 1, N, L, R);
+    struct Node
     {
-        for (int j = 0; j <= m + 1; j++)
-        {
-            d[i][j] = inf;
-        }
+        int lc, rc;
+        long long sum;
+    };
+
+    int n, node_cnt;
+    std::vector<Node> st;
+    std::vector<int> roots;
+
+    PersistentSegTree(int n, int max_updates)
+    {
+        this->n = n;
+        node_cnt = 0;
+        st.assign(n * 4 + max_updates * 20 + 7, {0, 0, 0});
+        roots.assign(max_updates + 7, 0);
     }
 
-    std::queue<ii> q;
-    d[s][t] = 0;
-    q.push({s, t});
-
-    while (!q.empty())
+    int build(int l, int r)
     {
-        int u = q.front().fi;
-        int v = q.front().se;
-        q.pop();
-
-        if (d[u][v] == k)
+        node_cnt++;
+        int id = node_cnt;
+        if (l == r)
         {
-            continue;
+            st[id].sum = a[l];
+            return id;
         }
-
-        for (int i = u + 1; i <= n + 1; i++)
-        {
-            if (i == sx && v == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[i][v] != 0)
-            {
-                break;
-            }
-            if (d[i][v] > d[u][v] + 1)
-            {
-                d[i][v] = d[u][v] + 1;
-                q.push({i, v});
-            }
-        }
-
-        for (int i = u - 1; i >= 0; i--)
-        {
-            if (i == sx && v == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[i][v] != 0)
-            {
-                break;
-            }
-            if (d[i][v] > d[u][v] + 1)
-            {
-                d[i][v] = d[u][v] + 1;
-                q.push({i, v});
-            }
-        }
-
-        for (int j = v + 1; j <= m + 1; j++)
-        {
-            if (u == sx && j == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[u][j] != 0)
-            {
-                break;
-            }
-            if (d[u][j] > d[u][v] + 1)
-            {
-                d[u][j] = d[u][v] + 1;
-                q.push({u, j});
-            }
-        }
-
-        for (int j = v - 1; j >= 0; j--)
-        {
-            if (u == sx && j == sy)
-            {
-                return d[u][v] + 1;
-            }
-            if (a[u][j] != 0)
-            {
-                break;
-            }
-            if (d[u][j] > d[u][v] + 1)
-            {
-                d[u][j] = d[u][v] + 1;
-                q.push({u, j});
-            }
-        }
-    }
-    return inf;
-}
-
-bool check(int k)
-{
-    for (int i = 0; i < sz(pairs); i++)
-    {
-        int r1 = pairs[i].fi.fi;
-        int c1 = pairs[i].fi.se;
-        int r2 = pairs[i].se.fi;
-        int c2 = pairs[i].se.se;
-        a[r1][c1] = f[r1][c1];
-        a[r2][c2] = f[r2][c2];
-    }
-
-    int cnt = sz(pairs);
-    std::vector<bool> removed(sz(pairs), false);
-
-    bool changed = true;
-    while (changed)
-    {
-        changed = false;
-        for (int i = 0; i < sz(pairs); i++)
-        {
-            if (!removed[i])
-            {
-                int r1 = pairs[i].fi.fi;
-                int c1 = pairs[i].fi.se;
-                int r2 = pairs[i].se.fi;
-                int c2 = pairs[i].se.se;
-
-                if (bfs(r1, c1, r2, c2, k) <= k)
-                {
-                    a[r1][c1] = 0;
-                    a[r2][c2] = 0;
-                    removed[i] = true;
-                    changed = true;
-                    cnt--;
-                }
-            }
-        }
-    }
-
-    return cnt == 0;
-}
-
-void solve()
-{
-    std::cin >> n >> m;
-    std::map<int, ii> pos;
-    pairs.clear();
-
-    for (int i = 0; i <= n + 1; i++)
-    {
-        for (int j = 0; j <= m + 1; j++)
-        {
-            f[i][j] = 0;
-            a[i][j] = 0;
-        }
-    }
-
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= m; j++)
-        {
-            std::cin >> f[i][j];
-            a[i][j] = f[i][j];
-            if (f[i][j] != 0)
-            {
-                if (pos.count(f[i][j]))
-                {
-                    pairs.pb({pos[f[i][j]], {i, j}});
-                }
-                else
-                {
-                    pos[f[i][j]] = {i, j};
-                }
-            }
-        }
-    }
-
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= m; j++)
-        {
-            if (pos[f[i][j]] == ii(i, j))
-            {
-                f[i][j] = 0;
-                a[i][j] = 0;
-            }
-        }
-    }
-
-    int l = 1;
-    int r = 4;
-    int ans = -1;
-
-    while (l <= r)
-    {
         int mid = (l + r) / 2;
-        if (check(mid))
+        st[id].lc = build(l, mid);
+        st[id].rc = build(mid + 1, r);
+        st[id].sum = st[st[id].lc].sum + st[st[id].rc].sum;
+        return id;
+    }
+
+    int update(int old_id, int l, int r, int pos, long long val)
+    {
+        node_cnt++;
+        int id = node_cnt;
+        st[id] = st[old_id];
+
+        if (l == r)
         {
-            ans = mid;
-            r = mid - 1;
+            st[id].sum = val;
+            return id;
+        }
+
+        int mid = (l + r) / 2;
+        if (pos <= mid)
+        {
+            st[id].lc = update(st[old_id].lc, l, mid, pos, val);
         }
         else
         {
-            l = mid + 1;
+            st[id].rc = update(st[old_id].rc, mid + 1, r, pos, val);
         }
+        st[id].sum = st[st[id].lc].sum + st[st[id].rc].sum;
+        return id;
     }
 
-    std::cout << ans << "\n";
+    long long query(int id, int l, int r, int u, int v)
+    {
+        if (!id || v < l || r < u)
+        {
+            return 0;
+        }
+        if (u <= l && r <= v)
+        {
+            return st[id].sum;
+        }
+        int mid = (l + r) / 2;
+        return query(st[id].lc, l, mid, u, v) + query(st[id].rc, mid + 1, r, u, v);
+    }
+};
+
+void solve()
+{
+    std::cin >> n >> q;
+    for (int i = 1; i <= n; i++)
+    {
+        std::cin >> a[i];
+    }
+
+    PersistentSegTree pst(n, q);
+
+    int ver = 1;
+    pst.roots[1] = pst.build(1, n);
+    
+    for (int i = 1; i <= q; i++)
+    {
+        int type;
+        std::cin >> type;
+        if (type == 1)
+        {
+            int k, pos, val;
+            std::cin >> k >> pos >> val;
+            pst.roots[k] = pst.update(pst.roots[k], 1, n, pos, val);
+        }
+        if (type == 2)
+        {
+            int k, l, r;
+            std::cin >> k >> l >> r;
+            std::cout << pst.query(pst.roots[k], 1, n, l, r) << "\n";
+        }
+        if (type == 3)
+        {
+            int k;
+            std::cin >> k;
+            ver++;
+            pst.roots[ver] = pst.roots[k];
+        }
+    }
 }
 
 __Thien_dep_trai__
@@ -281,6 +192,7 @@ __Thien_dep_trai__
     }
 
     int tt = 1;
+    // std::cin >> tt;
     while (tt--)
     {
         solve();
