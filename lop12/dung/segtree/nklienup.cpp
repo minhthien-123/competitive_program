@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "querymin"
+#define task "nklineup"
 #define int long long
 #define __Thien_dep_trai__ signed main()
 #define ll long long
@@ -58,72 +58,42 @@ ll power(ll x, ll y)
 
 int n, m;
 int a[maxn + 7];
-int st[4 * maxn + 8];
+
+struct node
+{
+    int Min, Max, val;
+};
+
+node st[4 * maxn + 8];
+
+node merge(node a, node b)
+{
+    node res;
+    res.Min = std::min(a.Min, b.Min);
+    res.Max = std::max(a.Max, b.Max);
+    res.val = res.Max - res.Min;
+    return res;
+}
 
 void build(int id, int l, int r)
 {
     if (l == r)
     {
-        st[id] = a[l];
+        st[id] = {a[l], a[l], 0};
         return;
     }
 
     int mid = (l + r) / 2;
     build(id * 2, l, mid);
     build(id * 2 + 1, mid + 1, r);
-    int upd1 = st[id * 2];
-    int upd2 = st[id * 2 + 1];
-    if (upd1 < 0 && upd2 < 0)
-    {
-        st[id] = 0;
-    }
-    else if (upd1 > 0 && upd2 > 0)
-    {
-        st[id] = std::min(upd1, upd2);
-    }
-    else
-    {
-        st[id] = std::max(upd1, upd2);
-    }
+    st[id] = merge(st[id * 2], st[id * 2 + 1]);
 }
 
-void update(int id, int l, int r, int pos, int val)
-{
-    if (pos < l || pos > r)
-    {
-        return;
-    }
-    if (l == r)
-    {
-        st[id] = val;
-        return;
-    }
-
-    int mid = (l + r) / 2;
-    update(id * 2, l, mid, pos, val);
-    update(id * 2 + 1, mid + 1, r, pos, val);
-
-    int upd1 = st[id * 2];
-    int upd2 = st[id * 2 + 1];
-    if (upd1 < 0 && upd2 < 0)
-    {
-        st[id] = 0;
-    }
-    else if (upd1 > 0 && upd2 > 0)
-    {
-        st[id] = std::min(upd1, upd2);
-    }
-    else
-    {
-        st[id] = std::max(upd1, upd2);
-    }
-}
-
-int query(int id, int l, int r, int u, int v)
+node query(int id, int l, int r, int u, int v)
 {
     if (v < l || r < u)
     {
-        return -inf;
+        return {inf, -inf, 0};
     }
     if (u <= l && r <= v)
     {
@@ -131,28 +101,28 @@ int query(int id, int l, int r, int u, int v)
     }
 
     int mid = (l + r) / 2;
-    int get1 = query(id * 2, l, mid, u, v);
-    int get2 = query(id * 2 + 1, mid + 1, r, u, v);
-    return std::max(get1, get2);
+    node get1 = query(id * 2, l, mid, u, v);
+    node get2 = query(id * 2 + 1, mid + 1, r, u, v);
+    return merge(get1, get2);
 }
 
 void solve()
 {
-    std::cin >> n >> m;
-    while (m--)
+    int q;
+    std::cin >> n >> q;
+    for (int i = 1; i <= n; i++)
     {
-        std::string type;
-        std::cin >> type;
-        if (type == "AGN")
-        {
-            int i, k;
-            std::cin >> i >> k;
-            update(1, 1, n, i, k);
-        }
-        else
-        {
-            std::cout << query(1, 1, n, 1, n) << "\n";
-        }
+        std::cin >> a[i];
+    }
+
+    build(1, 1, n);
+
+    while (q--)
+    {
+        int x, y;
+        std::cin >> x >> y;
+        node res = query(1, 1, n, x, y);
+        std::cout << res.val << "\n";
     }
 }
 
