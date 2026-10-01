@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "DOG"
+#define task "FGROUP"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
@@ -21,118 +21,36 @@ const int maxn = 1e5;
 const ll INF = 1e18;
 const int inf = 1e9;
 const int mod = 1e9 + 7;
-const int inv = (mod + 1) / 2;
-const int lg = 20;
-const int dx[] = {0, 1, 0, -1, -1, -1, 1, 1};
-const int dy[] = {1, 0, -1, 0, -1, 1, -1, 1};
-
-ll add(ll x, ll y)
-{
-    return (x + y + 2 * mod) % mod;
-}
-ll sub(ll x, ll y)
-{
-    return (x - y + 2 * mod) % mod;
-}
-ll mul(ll x, ll y)
-{
-    return (x % mod * (y % mod)) % mod;
-}
-ll power(ll x, ll y)
-{
-    if (y == 0)
-    {
-        return 1;
-    }
-    ll tmp = power(x, y / 2);
-    if (y % 2 == 0)
-    {
-        return (tmp * tmp) % mod;
-    }
-    else
-    {
-        return tmp * tmp % mod * x % mod;
-    }
-}
 
 int n;
-std::vector<std::pair<int, ll>> adj[maxn + 7];
-ll max1[maxn + 7], max2[maxn + 7], dp[maxn + 7];
-int child[maxn + 7];
-
-void dfs1(int u, int p)
-{
-    max1[u] = 0;
-    max2[u] = 0;
-    child[u] = -1;
-
-    for (auto [v, w] : adj[u])
-    {
-        if (v == p)
-        {
-            continue;
-        }
-
-        dfs1(v, u);
-
-        ll cur = max1[v] + w;
-
-        if (cur > max1[u])
-        {
-            max2[u] = max1[u];
-            max1[u] = cur;
-            child[u] = v;
-        }
-        else if (cur > max2[u])
-        {
-            max2[u] = cur;
-        }
-    }
-}
-
-void dfs2(int u, int p)
-{
-    for (auto [v, w] : adj[u])
-    {
-        if (v == p)
-        {
-            continue;
-        }
-
-        if (v == child[u])
-        {
-            dp[v] = w + std::max(dp[u], max2[u]);
-        }
-        else
-        {
-            dp[v] = w + std::max(dp[u], max1[u]);
-        }
-
-        dfs2(v, u);
-    }
-}
+ll B;
+std::map<ll, int> mp;
 
 void solve()
 {
-    std::cin >> n;
-    for (int i = 1; i < n; i++)
-    {
-        int u, v;
-        ll c;
-        std::cin >> u >> v >> c;
-        adj[u].pb({v, c});
-        adj[v].pb({u, c});
-    }
-
-    dfs1(1, 1);
-
-    dp[1] = 0;
-    dfs2(1, 1);
+    std::cin >> n >> B;
+    mp[0] = 0;
+    ll sum = 0;
+    int ans = -1;
 
     for (int i = 1; i <= n; i++)
     {
-        std::cout << std::max(max1[i], dp[i]) << " ";
+        ll a;
+        std::cin >> a;
+
+        sum += a - B * i;
+
+        if (mp.count(sum))
+        {
+            ans = std::max(ans, i - mp[sum]);
+        }
+        else
+        {
+            mp[sum] = i;
+        }
     }
+
+    std::cout << ans << "\n";
 }
 
 __Thien_dep_trai__
@@ -146,6 +64,11 @@ __Thien_dep_trai__
         std::freopen(task ".inp", "r", stdin);
         std::freopen(task ".out", "w", stdout);
     }
+    else if (std::fopen(task ".INP", "r"))
+    {
+        std::freopen(task ".INP", "r", stdin);
+        std::freopen(task ".OUT", "w", stdout);
+    }
 
     int tt = 1;
     // std::cin >> tt;
@@ -155,7 +78,6 @@ __Thien_dep_trai__
     }
 
     std::cerr << "\nTime elapsed: " << TIME << " s.\n";
-
     return 0;
 }
 /*
