@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define task "DoanChuan"
+#define task "L"
 #define __Thien_dep_trai__ signed main()
 #define ll long long
 #define ii std::pair<int, int>
