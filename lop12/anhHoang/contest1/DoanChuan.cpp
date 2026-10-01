@@ -56,7 +56,7 @@ ll power(ll x, ll y)
 }
 
 int n;
-int a[maxn + 7];
+ll a[maxn + 7];
 int nxt[maxn + 7];
 
 void solve()
@@ -67,7 +67,7 @@ void solve()
         std::cin >> a[i];
     }
 
-    int ans = 0;
+    ll ans = 0;
     for (int i = n; i >= 1; i--)
     {
         int j = i + 1;
