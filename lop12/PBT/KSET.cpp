@@ -59,6 +59,7 @@ ll power(ll x, ll y)
 }
 
 int minprime[maxn + 7];
+int cntPrime[maxn + 7];
 std::vector<int> primes;
 
 void sieve(int limit)
@@ -78,34 +79,55 @@ void sieve(int limit)
             }
             minprime[i * p] = p;
         }
+        cntPrime[i] = cntPrime[i - 1] + (minprime[i] == i);
     }
 }
 
-ll legendre(int n, int p)
-{
-    ll cnt = 0;
-    while (n > 0)
-    {
-        cnt += n / p;
-        n /= p;
-    }
-    return cnt;
-}
-
-ll dp[2][maxn + 7];
-ll fact[maxn + 7], invFact[maxn + 7];
+ll fact[maxn + 7], invFact[maxn + 7], invNum[maxn + 7];
+ll a[maxn + 7];
+int e[maxn + 7];
 
 void init()
 {
     fact[0] = invFact[0] = 1;
-    for (int i = 1; i < maxn; i++)
+    for (int i = 1; i <= maxn; i++)
     {
         fact[i] = mul(fact[i - 1], i);
     }
-    invFact[maxn - 1] = power(fact[maxn - 1], mod - 2);
-    for (int i = maxn - 2; i >= 1; i--)
+    invFact[maxn] = power(fact[maxn], mod - 2);
+    for (int i = maxn - 1; i >= 1; i--)
     {
         invFact[i] = mul(invFact[i + 1], i + 1);
+    }
+
+    invNum[1] = 1;
+    for (int i = 2; i <= maxn; i++)
+    {
+        invNum[i] = mul(mod - mod / i, invNum[mod % i]);
+    }
+
+    ll cur = 1;
+    a[1] = 1;
+    for (int i = 2; i <= maxn; i++)
+    {
+        int temp = i;
+        while (temp > 1)
+        {
+            int p = minprime[temp];
+            int cnt = 0;
+            while (temp % p == 0)
+            {
+                cnt++;
+                temp /= p;
+            }
+            if (e[p] > 0)
+            {
+                cur = mul(cur, invNum[e[p]]);
+            }
+            e[p] += cnt;
+            cur = mul(cur, e[p]);
+        }
+        a[i] = cur;
     }
 }
 
@@ -115,7 +137,7 @@ ll calc(int m, int k)
     for (int j = 0; j <= k; j++)
     {
         ll term = mul(power(j, m), mul(invFact[j], invFact[k - j]));
-        if ((k - j) % 2 != 0)
+        if ((k - j) & 1)
         {
             res = sub(res, term);
         }
@@ -133,23 +155,8 @@ void solve()
 {
     std::cin >> n >> k;
 
-    int m = std::upper_bound(primes.begin(), primes.end(), n) - primes.begin();
-
-    ll ways = 1;
-    for (int i = 0; i < m; i++)
-    {
-        int p = primes[i];
-        ll e;
-        if ((ll)p * p > n)
-        {
-            e = n / p;
-        }
-        else
-        {
-            e = legendre(n, p);
-        }
-        ways = mul(ways, e);
-    }
+    int m = cntPrime[n];
+    ll ways = a[n];
 
     ll part = 0;
     if (k == 2)
